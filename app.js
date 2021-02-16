@@ -2,9 +2,17 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan'); /* Middleware used for logging. */
 const bodyParser = require('body-parser'); /* Parse request body content. */
+const mongoose = require('mongoose'); /* Driver for working w/ MongoDB. */
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+
+mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW + '@instant-messaging-app.ctxt7.mongodb.net/<dbname>?retryWrites=true&w=majority', {
+    /*useMongoClient: true*/ /*Commented out code orig. from "MongoDB and Mongoose" video and replaced w/ useNewUrlParser, useUnifiedTopology -- see https://stackoverflow.com/questions/54494490/how-to-fix-warning-the-usemongoclient-option-is-no-longer-necessary-in-mongo */
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+
+})
 
 app.use(morgan('dev')); /*Logger should be in front of other .use commands. */
 /*Body parsing for URL and JSON formats. */
