@@ -12,8 +12,13 @@ router.get('/', (req, res, next) => {
 
 /*Handle post requests. */
 router.post('/', (req, res, next) => {
+    const product = { /*Documentation for this API would include what properties to include in the request body. */
+        name: req.body.name,
+        price: req.body.price
+    };
    res.status(201).json({
-       message: 'Handling POST requests to /products'
+       message: 'Handling POST requests to /products',
+       createdProduct: product
    });
 });
 
@@ -31,7 +36,6 @@ router.get('/:productID', (req, res, next) => {
             message: 'You passed an ID'
         })
     }
-
 });
 
 router.patch('/:productID', (req, res, next) => {
