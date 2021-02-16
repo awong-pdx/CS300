@@ -12,7 +12,8 @@ mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW + '@instant
     useNewUrlParser: true,
     useUnifiedTopology: true
 
-})
+});
+mongoose.Promise = global.Promise;
 
 app.use(morgan('dev')); /*Logger should be in front of other .use commands. */
 /*Body parsing for URL and JSON formats. */
