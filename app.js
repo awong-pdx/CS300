@@ -16,6 +16,7 @@ mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW + '@instant
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev')); /*Logger should be in front of other .use commands. */
+app.use('/uploads', express.static('uploads'));
 /*Body parsing for URL and JSON formats. */
 app.use(bodyParser.urlencoded({extended: false})); /* 'Extended: true' allows extended bodies w/ rich data (?). */
 app.use(bodyParser.json()); /* Extract JSON data and make it readable. */

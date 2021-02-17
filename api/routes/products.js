@@ -2,13 +2,42 @@ const express = require('express');
 const router = express.Router(); /* subpackage express framework ships w/ to handle 
                                     different routes, HTTP words, etc. */
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    //reject a file
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    }
+    else{
+        cb(null, false);
+    }
+
+};
+
+const upload = multer({ /* Initializes multer so it can be used*/
+    storage: storage, 
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+}); 
 
 const Product = require('../models/product');
 
 /* Handle get requests. */                                    
 router.get('/', (req, res, next) => {
     Product.find() /*Gets all products; find could add further filters: limit for a specific num. of items, etc. */
-        .select('name price _id')
+        .select('name price _id productImage')
         .exec()
         .then(docs => {
             const response = {
@@ -17,6 +46,7 @@ router.get('/', (req, res, next) => {
                     return {
                         name: doc.name,
                         price: doc.price,
+                        productImage: doc.productImage,
                         _id: doc._id,
                         request: {
                             type: 'GET',
@@ -44,7 +74,8 @@ router.get('/', (req, res, next) => {
 
 
 /*Handle post requests. */
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('productImage'), (req, res, next) => {
+    console.log(req.file);
     /*Commented out product was replaced with mongoose version for use w/ MongoDB (so can save new products to DB). */
     //const product = { /*Documentation for this API would include what properties to include in the request body. */
     //    name: req.body.name,
@@ -53,7 +84,8 @@ router.post('/', (req, res, next) => {
     const product = new Product({ /*Uses the model defined in ../models/product as a constructor. */
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        productImage: req.file.path
     });
     product
     .save()
@@ -85,7 +117,7 @@ router.post('/', (req, res, next) => {
 router.get('/:productID', (req, res, next) => {
     const id = req.params.productID; /* params.xxx: xxx must match the /:xxx specified in previous line. */
     Product.findById(id)
-    .select('name price _id') /*Specify exactly which fields to include in response. */
+    .select('name price _id productImage') /*Specify exactly which fields to include in response. */
     .exec()
     .then(doc => {
         console.log("From database", doc);
