@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router(); /* subpackage Express framework ships w/ to handle 
                                     different routes, HTTP words, etc. */
 const mongoose = require('mongoose');
+const checkAuth = require('../middleware/check-auth');
 
 const Order = require('../models/order');
 const Product = require('../models/product');
 
                                 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Order.find()
     .populate('product', 'name') /*Get the actual products, filter out which properties to show. */
     .select('product quantity _id')
@@ -35,7 +36,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => { /*This was a little confusing - see ~15:00 "Managing Orders w/ Mongoose" on YT. */
+router.post('/', checkAuth, (req, res, next) => { /*This was a little confusing - see ~15:00 "Managing Orders w/ Mongoose" on YT. */
     Product.findById(req.body.productID)
     .then(product => {
         if (!product) {
@@ -76,7 +77,7 @@ router.post('/', (req, res, next) => { /*This was a little confusing - see ~15:0
     });
 });
 
-router.get('/:orderID', (req, res, next) => {
+router.get('/:orderID', checkAuth, (req, res, next) => {
     Order.findById(req.params.orderID)
     .populate('product') 
     .exec()
@@ -101,7 +102,7 @@ router.get('/:orderID', (req, res, next) => {
     });
 });
 
-router.delete('/:orderID', (req, res, next) => {
+router.delete('/:orderID', checkAuth, (req, res, next) => {
     Order.remove({ _id: req.params.orderID })
     .exec()
     .then(result => {

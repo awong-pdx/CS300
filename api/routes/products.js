@@ -3,6 +3,7 @@ const router = express.Router(); /* subpackage express framework ships w/ to han
                                     different routes, HTTP words, etc. */
 const mongoose = require('mongoose');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -74,7 +75,7 @@ router.get('/', (req, res, next) => {
 
 
 /*Handle post requests. */
-router.post('/', upload.single('productImage'), (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => {
     console.log(req.file);
     /*Commented out product was replaced with mongoose version for use w/ MongoDB (so can save new products to DB). */
     //const product = { /*Documentation for this API would include what properties to include in the request body. */
@@ -142,7 +143,7 @@ router.get('/:productID', (req, res, next) => {
     });
 });
 
-router.patch('/:productID', (req, res, next) => {
+router.patch('/:productID', checkAuth, (req, res, next) => {
     const id = req.params.productID;
     const updateOps = {};
     for(const ops of req.body) {
@@ -170,7 +171,7 @@ router.patch('/:productID', (req, res, next) => {
 });
 
 /*Delete by product ID. */
-router.delete('/:productID', (req, res, next) => {
+router.delete('/:productID', checkAuth, (req, res, next) => {
     const id = req.params.productID;
     Product.remove({_id: id})
     .exec()
