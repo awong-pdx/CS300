@@ -6,6 +6,7 @@ const mongoose = require('mongoose'); /* Driver for working w/ MongoDB. */
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/user');
 
 mongoose.connect('mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW + '@instant-messaging-app.ctxt7.mongodb.net/<dbname>?retryWrites=true&w=majority', {
     /*useMongoClient: true*/ /*Commented out code orig. from "MongoDB and Mongoose" video and replaced w/ useNewUrlParser, useUnifiedTopology -- see https://stackoverflow.com/questions/54494490/how-to-fix-warning-the-usemongoclient-option-is-no-longer-necessary-in-mongo */
@@ -40,6 +41,7 @@ app.use('/products', productRoutes); /* Forwards all server requests to the firs
                                         forwarded to the file given in productRoutes.*/
 
 app.use('/orders', orderRoutes); 
+app.use('/user', userRoutes); 
 
 /*Handle errors (any requests that make it to this point). */
 app.use((req, res, next) => {
