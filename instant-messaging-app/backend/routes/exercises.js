@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const checkAuth = require('../middleware/check-auth');
 let Exercise = require('../models/exercise.model');
 
 router.route('/').get((req, res) => {
