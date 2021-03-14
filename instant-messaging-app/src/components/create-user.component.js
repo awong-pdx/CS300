@@ -85,7 +85,7 @@ export default class CreateUser extends Component {
                     <h2>
                         Sorry, {this.state.errorMessage}.
                     </h2>
-                };
+                }
             </div>
         );
     }
