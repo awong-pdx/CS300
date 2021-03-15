@@ -1,3 +1,13 @@
+# Instant Messaging App Project for CS300
+
+## Description
+
+## How to run
+
+Starting the frontend: From the root directory, run 'npm start'.
+
+Starting the backend: From the ./backend directory, run 'nodemon server'.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
