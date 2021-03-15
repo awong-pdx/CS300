@@ -12,11 +12,15 @@ router.route('/add').post((req, res) => {
   const username = req.body.username;
   const description = req.body.description;
   const date = Date.parse(req.body.date);
+  const participants = req.body.participants;
+  const messages = req.body.messages;
 
   const newRoom = new Room({
     username,
     description,
     date,
+    participants,
+    messages
   });
 
   newRoom.save()
@@ -42,6 +46,8 @@ router.route('/update/:id').post((req, res) => {
             room.username = req.body.username;
             room.description = req.body.description;
             room.date = Date.parse(req.body.date);
+            room.participants = req.body.participants;
+            room.messages = req.body.messages;
             room.save()
                 .then(() => res.json('Room updated!'))
                 .catch(err => res.status(400).json('Error: ' + err));
