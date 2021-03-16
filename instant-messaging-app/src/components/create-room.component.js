@@ -11,12 +11,17 @@ export default class CreateRoom extends Component {
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeDate = this.onChangeDate.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onAddParticipant = this.onAddParticipant.bind(this);
+        this.onChangeParticipantUsername = this.onChangeParticipantUsername.bind(this);
 
         this.state = {
             username: '',
             description: '',
             date: new Date(),
-            users: []
+            users: [],
+            participantUsername: '',
+            availableParticipants: [],
+            selectedParticipants: []
         }
     }
 
@@ -26,7 +31,9 @@ export default class CreateRoom extends Component {
                 if (response.data.length > 0) {
                     this.setState({
                         users: response.data.map(user => user.username),
-                        username: response.data[0].username
+                        availableParticipants: response.data.map(user => user.username),
+                        username: response.data[0].username,
+                        participantUsername: response.data[0].username
                     });
                 }
             })
@@ -39,6 +46,22 @@ export default class CreateRoom extends Component {
         this.setState({
             username: e.target.value
         });
+    }
+
+    onChangeParticipantUsername(e) {
+        this.setState({
+            participantUsername: e.target.value
+        });
+    }
+    
+
+    onAddParticipant(e) {
+        e.preventDefault();
+
+        this.setState({
+            availableParticipants: this.state.availableParticipants.filter((_, i) => i !== e),
+            selectedParticipants: [...this.selectedParticipants, e]
+        })
     }
 
     onChangeDescription(e) {
@@ -59,7 +82,8 @@ export default class CreateRoom extends Component {
         const room = {
             username: this.state.username,
             description: this.state.description,
-            date: this.state.date
+            date: this.state.date,
+            selectedParticipants: this.state.selectedParticipants
         }
 
         console.log(room)
@@ -75,9 +99,48 @@ export default class CreateRoom extends Component {
         return (
             <div>
                 <h3>Create New Chat Room</h3>
+                <form onAddParticipant={this.onAddParticipant}>
+                    <div className="form-group">
+                        <label>Participant to Add: </label>
+                        <select ref="userInput"
+                            required
+                            className="form-control"
+                            value={this.state.participantUsername}
+                            onChange={this.onChangeParticipantUsername}>
+                            {
+                                this.state.availableParticipants.map(function (user) {
+                                    return <option
+                                        key={user}
+                                        value={user}>{user}
+                                    </option>;
+                                })
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label>Added Participants: </label>
+                        <h1 ref="userInput"
+                            className="form-control"
+                            value = {this.state.onChangeParticipantUsername}
+                            onChange={this.onChangeParticipantUsername}>
+                            {
+                                this.state.selectedParticipants.map(function (user) {
+                                    return <option
+                                        key={user}
+                                        value={user}>{user}
+                                    </option>;
+                                })
+                            }
+                        </h1>
+                    </div>
+
+                    <div className="form-group">
+                        <input type="submit" value="Add participant" className="btn btn-primary" />
+                    </div>
+                </form>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
-                        <label>Username: </label>
+                        <label>Host: </label>
                         <select ref="userInput"
                             required
                             className="form-control"
@@ -93,6 +156,7 @@ export default class CreateRoom extends Component {
                             }
                         </select>
                     </div>
+
                     <div className="form-group">
                         <label>Description: </label>
                         <input type="text"

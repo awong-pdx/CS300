@@ -8,7 +8,7 @@ const Room = props => (
         <td>{props.room.description}</td>
         <td>{props.room.date.substring(0, 10)}</td>
         <td>
-            <Link to={"/edit/" + props.room._id}>edit</Link> | <a href="#" onClick={() => { props.deleteRoom(props.room._id) }}>delete</a>
+            <a target="_blank" href="localhost:3001">enter</a> | <Link to={"/edit/" + props.room._id}>edit</Link> | <a href="#" onClick={() => { props.deleteRoom(props.room._id) }}>delete</a>
         </td>
     </tr>
 )

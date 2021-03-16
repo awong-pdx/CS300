@@ -10,38 +10,16 @@ const port = process.env.PORT || 5000;
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 var path = require('path');
+const Room = require('./models/room.model');
 
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname+ '/../public/index.html'));
   //res.send('<h1>Hello world</h1>');
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
 
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-  });
-});
 
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
 
-    const newMessage = new Message({
-      username: "default",
-      content: msg
-    });
-
-    newMessage.save();
-
-  });
-});
 
 http.listen(3001, () => {
   console.log('listening on *:3001');
@@ -73,3 +51,50 @@ app.use('/rooms', roomsRouter);
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+
+    const newMessage = new Message({
+      username: "default",
+      content: msg
+    });
+
+    //var id = "604ed0797738394e0874d45a";
+    //const curRoom = Room.findById(id);
+    //curRoom.messages.push(newMessage);
+    //curRoom.save();
+    const testRoom = new Room({
+    username: "default",
+    description: "test",
+    date: "2021-03-13T02:49:40.938+00:00",
+    participants: [],
+    messages: [newMessage]
+    });
+    testRoom.save();
+
+
+
+    //roomsRouter.route('/update/604ed0797738394e0874d45a').post((req, res) => {
+    //  Room.findById('/update/604ed0797738394e0874d45a')
+    //    .then(room => {
+    //      room.messages.push(newMessage);
+    //      room.save()
+    //          .then(() => res.json('Room Updated!'))
+    //          .catch(err => res.status(400).json('Error: ' + err));
+    //    })
+    //    .catch(err => res.status(400).json('Error: ' + err));
+    //});
+    newMessage.save();
+  });
+
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+

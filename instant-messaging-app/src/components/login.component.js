@@ -43,7 +43,7 @@ export default class Login extends Component {
         axios.post('http://localhost:5000/users/login', loginUser)
             .then(res => {
                 console.log(res.data);
-                window.location = '/exerciselist';
+                window.location = '/roomlist';
             })
             .catch(err => {
                 if (err.response.status === 401) {
